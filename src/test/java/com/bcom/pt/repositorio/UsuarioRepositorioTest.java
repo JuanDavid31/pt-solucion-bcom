@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 
@@ -45,5 +46,15 @@ public class UsuarioRepositorioTest {
             .contains(usuarioList.get(0),
                       usuarioList.get(1),
                       usuarioList.get(2));
+    }
+
+    @Test
+    public void agregarUsuario() {
+        repositorio.save(new Usuario("Dummy"));
+        Usuario usuario = em.find(Usuario.class, 1);
+        assertNotNull(usuario);
+        assertEquals(usuario.getNombre(), "Dummy");
+        assertNotNull(usuario.getFechaModificacion());
+        assertNotNull(usuario.getFechaCreacion());
     }
 }
