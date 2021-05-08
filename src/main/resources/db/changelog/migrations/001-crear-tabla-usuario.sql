@@ -2,10 +2,10 @@
 --changeset JuanDavid:1
 create table USUARIO
 (
-    ID                 INT auto_increment,
-    NOMBRE             VARCHAR(30),
-    FECHA_CREACION     TIMESTAMP default current_timestamp() not null,
-    FECHA_MODIFICACION TIMESTAMP default current_timestamp() not null,
+    id                 serial,
+    nombre             VARCHAR(30),
+    fecha_creacion     TIMESTAMP default now() not null,
+    fecha_modificacion TIMESTAMP default now() not null,
     constraint USUARIO_PK primary key (ID)
 );
 

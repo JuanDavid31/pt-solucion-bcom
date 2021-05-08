@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 src/main/resources/db/changelog/liquibase-outputChangeLog.xml
+data
 
 ### STS ###
 .apt_generated

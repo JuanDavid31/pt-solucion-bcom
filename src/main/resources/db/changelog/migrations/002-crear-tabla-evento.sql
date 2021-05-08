@@ -1,13 +1,13 @@
 --liquibase formatted sql
---changeset JuanDavid:1
+--changeset JuanDavid:2
 create table EVENTO
 (
-    id                 int auto_increment,
-    nombre             varchar2(30)                         not null,
+    id                 serial,
+    nombre             varchar(30)                         not null,
     descripcion        text,
-    fecha_modificacion datetime default current_timestamp() not null,
-    fecha_creacion     datetime default current_timestamp() not null,
-    fecha              datetime                             not null,
+    fecha_modificacion timestamp default now() not null,
+    fecha_creacion     timestamp default now() not null,
+    fecha              timestamp                            not null,
     id_creador         int,
     constraint EVENTO_PK primary key (id),
     constraint EVENTO_FK foreign key (id_creador) references USUARIO
