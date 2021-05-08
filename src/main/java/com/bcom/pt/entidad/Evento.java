@@ -1,31 +1,37 @@
 package com.bcom.pt.entidad;
 
-import liquibase.pro.packaged.C;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Table(name = "USUARIO")
+@Table(name = "EVENTO")
 @Entity
-public class Usuario {
+public class Evento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_creador")
+    private Usuario creador;
+
     @Column
     private String nombre;
 
-    @OneToMany(mappedBy = "creador")
-    private List<Evento> eventos = new ArrayList();
+    @Column
+    private String descripcion;
+
+    @Column
+    private LocalDateTime fecha;
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
@@ -33,12 +39,18 @@ public class Usuario {
     @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
-    public Usuario() {}
+    public Evento() {
+    }
 
-    public Usuario(String nombre) {
+    public Evento(String nombre, LocalDateTime fecha) {
         this.nombre = nombre;
-        this.fechaCreacion = LocalDateTime.now();
-        this.fechaModificacion = LocalDateTime.now();
+        this.fecha = fecha;
+    }
+
+    public Evento(String nombre, LocalDateTime fecha, Usuario creador) {
+        this.nombre = nombre;
+        this.fecha = fecha;
+        this.creador = creador;
     }
 
     public int getId() {
@@ -49,6 +61,14 @@ public class Usuario {
         this.id = id;
     }
 
+    public Usuario getCreador() {
+        return creador;
+    }
+
+    public void setCreador(Usuario creador) {
+        this.creador = creador;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -57,12 +77,20 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public List<Evento> getEventos() {
-        return eventos;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setEventos(List<Evento> eventos) {
-        this.eventos = eventos;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -81,22 +109,26 @@ public class Usuario {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public void agregarEvento(Evento evento) {
-        eventos.add(evento);
-        evento.setCreador(this);
+    @Override
+    public boolean equals(Object o) { //TODO: El equals debe comparar todos los atributos
+        if (this == o) return true;
+        if (!(o instanceof Evento )) return false;
+        return id == (((Evento) o).getId());
     }
 
-    public void eliminarEvento(Evento evento) {
-        eventos.remove(evento);
-        evento.setCreador(null);
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 
     @Override
     public String toString() {
-        return "Usuario{" +
+        return "Evento{" +
             "id=" + id +
+            ", creador=" + (creador != null) +
             ", nombre='" + nombre + '\'' +
-            ", eventos=" + eventos.size() +
+            ", descripcion='" + descripcion + '\'' +
+            ", fecha=" + fecha +
             ", fechaCreacion=" + fechaCreacion +
             ", fechaModificacion=" + fechaModificacion +
             '}';
