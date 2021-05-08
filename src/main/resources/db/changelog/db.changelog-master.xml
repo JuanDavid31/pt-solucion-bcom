@@ -12,11 +12,11 @@
             <column autoIncrement="true" name="ID" type="INT(10)">
                 <constraints primaryKey="true" primaryKeyName="USUARIO_PK"/>
             </column>
-            <column name="NOMBRE" type="VARCHAR2(30)"/>
-            <column defaultValueComputed="NOW()" name="FECHA_CREACION" type="date">
+            <column name="NOMBRE" type="VARCHAR(30)"/>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="FECHA_CREACION" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueComputed="NOW()" name="FECHA_MODIFICACION" type="INT(10)">
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="FECHA_MODIFICACION" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
