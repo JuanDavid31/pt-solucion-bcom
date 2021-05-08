@@ -50,10 +50,18 @@ public class UsuarioRepositorioTest {
 
     @Test
     public void agregarUsuario() {
+        repositorio.save(new Usuario(""));
         repositorio.save(new Usuario("Dummy"));
+
         Usuario usuario = em.find(Usuario.class, 1);
+        Usuario usuario2 = em.find(Usuario.class, 2);
+
         assertNotNull(usuario);
-        assertEquals(usuario.getNombre(), "Dummy");
+        assertNotNull(usuario.getFechaModificacion());
+        assertNotNull(usuario.getFechaCreacion());
+
+        assertNotNull(usuario2);
+        assertEquals("Dummy", usuario2.getNombre());
         assertNotNull(usuario.getFechaModificacion());
         assertNotNull(usuario.getFechaCreacion());
     }

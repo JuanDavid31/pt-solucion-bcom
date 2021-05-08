@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
@@ -7,18 +8,7 @@
    http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet author="Juan David" id="1">
-        <createTable tableName="USUARIO">
-            <column autoIncrement="true" name="ID" type="INT(10)">
-                <constraints primaryKey="true" primaryKeyName="USUARIO_PK"/>
-            </column>
-            <column name="NOMBRE" type="VARCHAR(30)"/>
-            <column defaultValueComputed="CURRENT_TIMESTAMP" name="FECHA_CREACION" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column defaultValueComputed="CURRENT_TIMESTAMP" name="FECHA_MODIFICACION" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+    <include file="migrations/001-crear-tabla-usuario.sql" relativeToChangelogFile="true"/>
+    <include file="migrations/002-crear-tabla-evento.sql" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>
