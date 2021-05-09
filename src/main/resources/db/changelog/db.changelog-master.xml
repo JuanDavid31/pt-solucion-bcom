@@ -10,5 +10,6 @@
 
     <include file="migrations/001-crear-tabla-usuario.sql" relativeToChangelogFile="true"/>
     <include file="migrations/002-crear-tabla-evento.sql" relativeToChangelogFile="true"/>
+    <include file="migrations/003-crear-tabla-asistencia.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
