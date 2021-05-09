@@ -98,6 +98,17 @@ public class EventoRepositorioTest {
         assertThat(eventoRepositorio.findAll()).hasSize(2);
     }
 
+    @Test
+    public void editarEvento() {
+        Evento evento = em.find(Evento.class, 1);
+
+        evento.setNombre("Nuevo nombre");
+        eventoRepositorio.save(evento);
+        evento = em.find(Evento.class, 1);
+
+        assertEquals("Nuevo nombre", evento.getNombre());
+    }
+
     private void revisarDatos() {
         usuarioRepositorio.findAll().forEach(System.out::println);
         eventoRepositorio.findAll().forEach(System.out::println);
