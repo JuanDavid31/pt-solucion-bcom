@@ -1,51 +1,68 @@
 package com.bcom.pt.repositorio;
 
 import com.bcom.pt.entidad.Usuario;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-import javax.persistence.EntityManager;
-import java.util.Arrays;
-import java.util.List;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 
 
 @DataJpaTest// Recomendable leer la documentación
 @RunWith(SpringRunner.class) //Junit 5 no necesita esta anotación
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ContextConfiguration(initializers = { UsuarioRepositorioTest.Initializer.class })
-@Sql("/scripts/first.sql")
+//@Sql(scripts = "/scripts/first.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)) //Se ejecuta una vez por @Test
 public class UsuarioRepositorioTest {
 
     @Autowired
     private UsuarioRepositorio repositorio;
 
     @Autowired
-    private EntityManager em;
+    private TestEntityManager em;
 
     @ClassRule
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
 
+    @Autowired
+    private DataSource datasource;
+
+    private static boolean dataLoaded = false;
+
+    @Before
+    public void setup() {
+        if (dataLoaded)return;
+        try (Connection conn = datasource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/scripts/first.sql"));
+            dataLoaded = true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     @Test
-    public void darUsuariosInexistentes() {
+    public void darUsuarios() {
         Iterable<Usuario> usuarios = repositorio.findAll();
 
         assertNotNull(usuarios);
@@ -53,36 +70,11 @@ public class UsuarioRepositorioTest {
     }
 
     @Test
-    public void darUsuariosTest() {
-        List<Usuario> usuarioList = Arrays.asList(new Usuario("Dummy"),
-                                                  new Usuario("Dummy2"),
-                                                  new Usuario("Dummy3"));
-        usuarioList.forEach(em::persist);
-
-        Iterable<Usuario> usuarios = repositorio.findAll();
-        assertThat(usuarios)
-            .hasSize(6)
-            .contains(usuarioList.get(0),
-                      usuarioList.get(1),
-                      usuarioList.get(2));
-    }
-
-    @Test
     public void agregarUsuario() {
-        repositorio.save(new Usuario(""));
+        Usuario usuarioGuardado = repositorio.save(new Usuario(""));
+        Usuario usuario = em.find(Usuario.class, usuarioGuardado.getId());
 
-        Usuario usuario = em.find(Usuario.class, 4);
-
-        assertNull(usuario);
-    }
-
-    @Test
-    public void agregarUsuarioConFlush() {
-        repositorio.saveAndFlush(new Usuario(""));
-
-        Usuario usuario = em.find(Usuario.class, 4);
-
-        assertNull(usuario);
+        assertNotNull(usuario);
     }
 
     @Test
@@ -107,12 +99,19 @@ public class UsuarioRepositorioTest {
     public void consultarUsuario() {
         Optional<Usuario> usuarioOpt = repositorio.findById(1);
 
-        assertThat(usuarioOpt).isEmpty();
+        assertThat(usuarioOpt).isPresent();
     }
 
     @Test
     public void consultarUsuarioPorReferencia() {
         Usuario usuario = repositorio.getOne(1);
+
+        assertNotNull(usuario);
+    }
+
+    @Test
+    public void consultarUsuarioInexistentePorReferencia() {
+        Usuario usuario = repositorio.getOne(99);
 
         assertNotNull(usuario);
     }
