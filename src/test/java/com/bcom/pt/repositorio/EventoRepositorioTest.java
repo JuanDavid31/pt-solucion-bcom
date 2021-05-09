@@ -28,6 +28,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
@@ -74,7 +75,6 @@ public class EventoRepositorioTest {
 
     @Test
     public void agregarEventoConReferencia() {
-        revisarDatos();
         Usuario usuario = usuarioRepositorio.getOne(1);//Igual que em.getReference(...)
         Evento evento = eventoRepositorio.save(new Evento("Nuevo evento", fecha, usuario));
 
@@ -89,7 +89,6 @@ public class EventoRepositorioTest {
 
     @Test
     public void agregarEventoDesdeReferenciaNoAgrega() {
-        revisarDatos();
         Usuario usuario = usuarioRepositorio.getOne(1);
         Evento evento = new Evento("Nuevo evento", fecha);
         usuario.agregarEvento(evento);
@@ -109,10 +108,15 @@ public class EventoRepositorioTest {
         assertEquals("Nuevo nombre", evento.getNombre());
     }
 
-    private void revisarDatos() {
-        usuarioRepositorio.findAll().forEach(System.out::println);
-        eventoRepositorio.findAll().forEach(System.out::println);
+    @Test
+    public void eliminarEvento() {
+        eventoRepositorio.deleteById(1);
+
+        Evento evento = em.find(Evento.class, 1);
+
+        assertNull(evento);
     }
+
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
