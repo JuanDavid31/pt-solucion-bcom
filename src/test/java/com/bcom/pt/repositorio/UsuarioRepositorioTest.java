@@ -18,10 +18,12 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
 
 
@@ -43,6 +45,7 @@ public class UsuarioRepositorioTest {
     @Test
     public void darUsuariosInexistentes() {
         Iterable<Usuario> usuarios = repositorio.findAll();
+
         assertNotNull(usuarios);
         assertThat(usuarios).isEmpty();
     }
@@ -65,6 +68,25 @@ public class UsuarioRepositorioTest {
     @Test
     public void agregarUsuario() {
         repositorio.save(new Usuario(""));
+
+        Usuario usuario = em.find(Usuario.class, 1);
+
+        assertNull(usuario);
+    }
+
+    @Test
+    public void agregarUsuarioConFlush() {
+        repositorio.saveAndFlush(new Usuario(""));
+        repositorio.flush();
+
+        Usuario usuario = em.find(Usuario.class, 1);
+
+        assertNull(usuario);
+    }
+
+    @Test
+    public void agregarMultiplesUsuarios() {
+        repositorio.save(new Usuario(""));
         repositorio.save(new Usuario("Dummy"));
 
         Usuario usuario = em.find(Usuario.class, 1);
@@ -80,6 +102,24 @@ public class UsuarioRepositorioTest {
         assertNotNull(usuario.getFechaCreacion());
     }
 
+    @Test
+    public void consultarUsuario() {
+        em.persist(new Usuario("Dummy"));
+
+        Optional<Usuario> usuarioOpt = repositorio.findById(1);
+
+        assertThat(usuarioOpt).isEmpty();
+    }
+
+    @Test
+    public void consultarUsuarioPorReferencia() {
+        em.persist(new Usuario("Dummy"));
+
+        Usuario usuario = repositorio.getOne(1);
+
+        assertNotNull(usuario);
+    }
+
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
@@ -87,6 +127,7 @@ public class UsuarioRepositorioTest {
                 "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
                 "spring.datasource.username=" + postgreSQLContainer.getUsername(),
                 "spring.datasource.password=" + postgreSQLContainer.getPassword(),
+                "spring.jpa.properties.hibernate.format_sql=" + true,
                 "spring.liquibase.enabled=" + true)
                 .applyTo(configurableApplicationContext.getEnvironment());
         }

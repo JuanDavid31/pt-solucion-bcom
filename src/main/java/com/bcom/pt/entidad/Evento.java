@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Evento {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,10 +34,10 @@ public class Evento {
     private LocalDateTime fecha;
 
     @Column(name = "fecha_creacion")
-    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(name = "fecha_modificacion")
-    private LocalDateTime fechaModificacion;
+    private LocalDateTime fechaModificacion = LocalDateTime.now();
 
     public Evento() {
     }
