@@ -12,6 +12,7 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -28,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(initializers = { EventoRepositorioTest.Initializer.class })
+@Sql("/scripts/first.sql")
 public class EventoRepositorioTest {
 
     @Autowired
@@ -46,8 +48,6 @@ public class EventoRepositorioTest {
 
     @Test
     public void agregarEventoConReferencia() {
-        em.persist(new Usuario("Dummy"));
-
         Usuario usuario = usuarioRepositorio.getOne(1);//Igual que em.getReference(...)
         Evento evento = new Evento("Nuevo evento", fecha, usuario);
         eventoRepositorio.save(evento);
@@ -64,8 +64,6 @@ public class EventoRepositorioTest {
 
     @Test
     public void agregarEventoDesdeReferencia() {
-        em.persist(new Usuario("Dummy"));
-
         Usuario usuario = usuarioRepositorio.getOne(1);
         Evento evento = new Evento("Nuevo evento", fecha);
 

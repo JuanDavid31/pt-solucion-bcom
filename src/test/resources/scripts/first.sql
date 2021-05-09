@@ -1,0 +1,1 @@
+INSERT INTO usuario(nombre) values (''), ('Juan'), ('David');

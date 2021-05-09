@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -31,6 +32,7 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @RunWith(SpringRunner.class) //Junit 5 no necesita esta anotación
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ContextConfiguration(initializers = { UsuarioRepositorioTest.Initializer.class })
+@Sql("/scripts/first.sql")
 public class UsuarioRepositorioTest {
 
     @Autowired
@@ -47,7 +49,7 @@ public class UsuarioRepositorioTest {
         Iterable<Usuario> usuarios = repositorio.findAll();
 
         assertNotNull(usuarios);
-        assertThat(usuarios).isEmpty();
+        assertThat(usuarios).hasSize(3);
     }
 
     @Test
@@ -59,7 +61,7 @@ public class UsuarioRepositorioTest {
 
         Iterable<Usuario> usuarios = repositorio.findAll();
         assertThat(usuarios)
-            .hasSize(3)
+            .hasSize(6)
             .contains(usuarioList.get(0),
                       usuarioList.get(1),
                       usuarioList.get(2));
@@ -69,7 +71,7 @@ public class UsuarioRepositorioTest {
     public void agregarUsuario() {
         repositorio.save(new Usuario(""));
 
-        Usuario usuario = em.find(Usuario.class, 1);
+        Usuario usuario = em.find(Usuario.class, 4);
 
         assertNull(usuario);
     }
@@ -77,9 +79,8 @@ public class UsuarioRepositorioTest {
     @Test
     public void agregarUsuarioConFlush() {
         repositorio.saveAndFlush(new Usuario(""));
-        repositorio.flush();
 
-        Usuario usuario = em.find(Usuario.class, 1);
+        Usuario usuario = em.find(Usuario.class, 4);
 
         assertNull(usuario);
     }
@@ -89,8 +90,8 @@ public class UsuarioRepositorioTest {
         repositorio.save(new Usuario(""));
         repositorio.save(new Usuario("Dummy"));
 
-        Usuario usuario = em.find(Usuario.class, 1);
-        Usuario usuario2 = em.find(Usuario.class, 2);
+        Usuario usuario = em.find(Usuario.class, 4);
+        Usuario usuario2 = em.find(Usuario.class, 5);
 
         assertNotNull(usuario);
         assertNotNull(usuario.getFechaModificacion());
@@ -104,8 +105,6 @@ public class UsuarioRepositorioTest {
 
     @Test
     public void consultarUsuario() {
-        em.persist(new Usuario("Dummy"));
-
         Optional<Usuario> usuarioOpt = repositorio.findById(1);
 
         assertThat(usuarioOpt).isEmpty();
@@ -113,8 +112,6 @@ public class UsuarioRepositorioTest {
 
     @Test
     public void consultarUsuarioPorReferencia() {
-        em.persist(new Usuario("Dummy"));
-
         Usuario usuario = repositorio.getOne(1);
 
         assertNotNull(usuario);
