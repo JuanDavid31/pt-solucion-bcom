@@ -1,5 +1,6 @@
 package com.bcom.pt.entidad;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +31,7 @@ public class Evento {
     @JoinColumn(name="id_creador")
     private Usuario creador;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "ASISTENCIA",
         joinColumns = @JoinColumn(name = "id_evento", nullable = false),
@@ -158,6 +159,7 @@ public class Evento {
         return "Evento{" +
             "id=" + id +
             ", creador=" + (creador != null) +
+            ", asistentes=" + asistentes.size() +
             ", nombre='" + nombre + '\'' +
             ", descripcion='" + descripcion + '\'' +
             ", fecha=" + fecha +

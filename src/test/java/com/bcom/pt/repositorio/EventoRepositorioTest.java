@@ -123,6 +123,20 @@ public class EventoRepositorioTest {
     }
 
     @Test
+    public void eliminarEventoYAsistencia() {
+        eventoRepositorio.deleteById(2);
+
+        Evento evento = em.find(Evento.class, 2);
+        Usuario usuario = em.find(Usuario.class, 3);
+        int result = ((Number) em.createNativeQuery("SELECT count(*) FROM asistencia")
+            .getSingleResult()).intValue();
+
+        assertEquals(0, result);
+        assertNull(evento);
+        assertThat(usuario.getEventosAsistidos()).isEmpty();
+    }
+
+    @Test
     public void agregarAsistenciaDesdeEvento() {
         Usuario usuario = usuarioRepositorio.getOne(1);
         Evento evento = eventoRepositorio.getOne(1);
