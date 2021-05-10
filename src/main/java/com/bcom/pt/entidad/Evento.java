@@ -1,5 +1,7 @@
 package com.bcom.pt.entidad;
 
+import org.apache.tomcat.jni.Local;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +14,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -140,6 +144,11 @@ public class Evento {
     public void eliminarAsistente(Usuario usuario) {
         asistentes.remove(usuario);
         usuario.getEventosAsistidos().remove(this);
+    }
+
+    @PreUpdate
+    public void actualizarFechaModificacion() {
+        setFechaModificacion(LocalDateTime.now());
     }
 
     @Override
