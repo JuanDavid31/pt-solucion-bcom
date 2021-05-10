@@ -87,6 +87,11 @@ public class EventoRepositorioTest {
         assertNotNull(eventoAgregado.getFechaModificacion());
     }
 
+    /**
+     * No es posible agregarle un evento a un usuario de esta manera.
+     * Pero seria posible si se agrega un @OneToMany(cascade = CascasdeType.Persist)
+     * a el dueño de la relación; osea la clase Usuario.
+     */
     @Test
     public void agregarEventoDesdeReferenciaNoAgrega() {
         Usuario usuario = usuarioRepositorio.getOne(1);
@@ -117,6 +122,33 @@ public class EventoRepositorioTest {
         assertNull(evento);
     }
 
+    @Test
+    public void agregarAsistenciaDesdeEvento() {
+        Usuario usuario = usuarioRepositorio.getOne(1);
+        Evento evento = eventoRepositorio.getOne(1);
+
+        evento.agregarAsistente(usuario);
+        eventoRepositorio.save(evento);
+
+        Evento eventoEncontrado = em.find(Evento.class, 1);
+        Usuario usuarioEncontrado = em.find(Usuario.class, 1);
+        assertThat(eventoEncontrado.getAsistentes()).hasSize(1);
+        assertThat(usuarioEncontrado.getEventosAsistidos()).hasSize(1);
+    }
+
+    @Test
+    public void agregarAsistenciaDesdeUsuario() {
+        Usuario usuario = usuarioRepositorio.getOne(1);
+        Evento evento = eventoRepositorio.getOne(1);
+
+        usuario.agregarEventoAsistido(evento);
+        usuarioRepositorio.save(usuario);
+
+        Evento eventoEncontrado = em.find(Evento.class, 1);
+        Usuario usuarioEncontrado = em.find(Usuario.class, 1);
+        assertThat(eventoEncontrado.getAsistentes()).hasSize(1);
+        assertThat(usuarioEncontrado.getEventosAsistidos()).hasSize(1);
+    }
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override

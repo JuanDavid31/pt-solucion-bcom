@@ -7,10 +7,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Table(name = "EVENTO")
 @Entity
@@ -23,6 +29,14 @@ public class Evento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_creador")
     private Usuario creador;
+
+    @ManyToMany
+    @JoinTable(
+        name = "ASISTENCIA",
+        joinColumns = @JoinColumn(name = "id_evento", nullable = false),
+        inverseJoinColumns = @JoinColumn(name="id_usuario", nullable = false)
+    )
+    private Set<Usuario> asistentes = new HashSet<>(); //Set es más optimo para @ManyToMany
 
     @Column
     private String nombre;
@@ -69,6 +83,14 @@ public class Evento {
         this.creador = creador;
     }
 
+    public Set<Usuario> getAsistentes() {
+        return asistentes;
+    }
+
+    public void setAsistentes(Set<Usuario> asistentes) {
+        this.asistentes = asistentes;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -107,6 +129,16 @@ public class Evento {
 
     public void setFechaModificacion(LocalDateTime fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
+    }
+
+    public void agregarAsistente(Usuario usuario) {
+        asistentes.add(usuario);
+        usuario.getEventosAsistidos().add(this);
+    }
+
+    public void eliminarAsistente(Usuario usuario) {
+        asistentes.remove(usuario);
+        usuario.getEventosAsistidos().remove(this);
     }
 
     @Override
