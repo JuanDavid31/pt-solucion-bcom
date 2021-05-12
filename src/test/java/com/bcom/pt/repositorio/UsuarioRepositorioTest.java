@@ -71,7 +71,7 @@ public class UsuarioRepositorioTest {
 
     @Test
     public void agregarUsuario() {
-        Usuario usuarioGuardado = repositorio.save(new Usuario(""));
+        Usuario usuarioGuardado = repositorio.save(new Usuario("Valido"));
         Usuario usuario = em.find(Usuario.class, usuarioGuardado.getId());
 
         assertNotNull(usuario);
@@ -79,8 +79,8 @@ public class UsuarioRepositorioTest {
 
     @Test
     public void agregarMultiplesUsuarios() {
-        repositorio.save(new Usuario(""));
         repositorio.save(new Usuario("Dummy"));
+        repositorio.save(new Usuario("Dummy2"));
 
         Usuario usuario = em.find(Usuario.class, 4);
         Usuario usuario2 = em.find(Usuario.class, 5);
@@ -90,7 +90,7 @@ public class UsuarioRepositorioTest {
         assertNotNull(usuario.getFechaCreacion());
 
         assertNotNull(usuario2);
-        assertEquals("Dummy", usuario2.getNombre());
+        assertEquals("Dummy2", usuario2.getNombre());
         assertNotNull(usuario.getFechaModificacion());
         assertNotNull(usuario.getFechaCreacion());
     }

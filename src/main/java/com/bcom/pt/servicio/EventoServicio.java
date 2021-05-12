@@ -44,7 +44,7 @@ public class EventoServicio {
     }
 
     public boolean agregarAsistencia(int idUsuario, int idEvento) {
-        Usuario usuario = usuarioRepositorio.getOne(idEvento);
+        Usuario usuario = usuarioRepositorio.getOne(idUsuario);
         Evento evento = eventoRepositorio.getOne(idEvento);
         evento.agregarAsistente(usuario);
         eventoRepositorio.save(evento);

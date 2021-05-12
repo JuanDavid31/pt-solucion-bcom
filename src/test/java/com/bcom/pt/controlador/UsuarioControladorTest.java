@@ -2,6 +2,7 @@ package com.bcom.pt.controlador;
 
 import com.bcom.pt.entidad.Usuario;
 import com.bcom.pt.servicio.UsuarioServicio;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,8 +63,6 @@ public class UsuarioControladorTest {
 
     @Test
     public void agregarUsuarioSinUsuario() throws Exception {
-        //when(servicio.agregarUsuario(any())).thenReturn(new Usuario());
-
         mockMvc.perform(post("/usuarios"))
             .andDo(print())
             .andExpect(status().isBadRequest());
@@ -70,7 +70,6 @@ public class UsuarioControladorTest {
 
     @Test
     public void agregarUsuarioInvalido() throws Exception {
-
         mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Usuario())))
@@ -79,8 +78,19 @@ public class UsuarioControladorTest {
 
         mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(new Usuario("joj"))))
+                            .content(objectMapper.writeValueAsString(new Usuario("abc"))))
             .andDo(print())
             .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void agregarUsuarioValido() throws Exception {
+        when(servicio.agregarUsuario(any())).thenReturn(new Usuario());
+        mockMvc.perform(post("/usuarios")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(new Usuario("valido"))))
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
+
 }
