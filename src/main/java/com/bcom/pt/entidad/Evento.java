@@ -70,8 +70,9 @@ public class Evento {
         return id;
     }
 
-    public void setId(int id) {
+    public Evento setId(int id) {
         this.id = id;
+        return this;
     }
 
     public Usuario getCreador() {
@@ -94,24 +95,27 @@ public class Evento {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public Evento setNombre(String nombre) {
         this.nombre = nombre;
+        return this;
     }
 
     public String getDescripcion() {
         return descripcion;
     }
 
-    public void setDescripcion(String descripcion) {
+    public Evento setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+        return this;
     }
 
     public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDateTime fecha) {
+    public Evento setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
+        return this;
     }
 
     public LocalDateTime getFechaCreacion() {
