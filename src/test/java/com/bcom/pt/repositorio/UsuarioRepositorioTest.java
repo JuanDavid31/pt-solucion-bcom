@@ -13,7 +13,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -30,8 +29,8 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 
 @DataJpaTest// Recomendable leer la documentación
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@ContextConfiguration(initializers = { UsuarioRepositorioTest.Initializer.class })
 @Testcontainers
+@ContextConfiguration(initializers = { UsuarioRepositorioTest.Initializer.class })
 public class UsuarioRepositorioTest {
 
     @Autowired
@@ -40,13 +39,13 @@ public class UsuarioRepositorioTest {
     @Autowired
     private TestEntityManager em;
 
-    @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
+    private static boolean dataLoaded = false;
 
     @Autowired
     private DataSource datasource;
 
-    private static boolean dataLoaded = false;
+    @Container
+    public static PostgresContainer container = PostgresContainer.getInstance();
 
     @BeforeEach
     public void setup() {
@@ -118,9 +117,9 @@ public class UsuarioRepositorioTest {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-                "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                "spring.datasource.password=" + postgreSQLContainer.getPassword(),
+                "spring.datasource.url=" + container.getJdbcUrl(),
+                "spring.datasource.username=" + container.getUsername(),
+                "spring.datasource.password=" + container.getPassword(),
                 "spring.jpa.properties.hibernate.format_sql=" + true,
                 "spring.liquibase.enabled=" + true)
                 .applyTo(configurableApplicationContext.getEnvironment());

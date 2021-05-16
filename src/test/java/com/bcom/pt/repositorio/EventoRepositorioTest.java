@@ -13,7 +13,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -45,7 +44,7 @@ public class EventoRepositorioTest {
     private UsuarioRepositorio usuarioRepositorio;
 
     @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
+    public static PostgresContainer container = PostgresContainer.getInstance();
 
     private final LocalDateTime fecha = LocalDateTime.now().plus(1, DAYS);
 
@@ -166,9 +165,9 @@ public class EventoRepositorioTest {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-                "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                "spring.datasource.password=" + postgreSQLContainer.getPassword(),
+                "spring.datasource.url=" + container.getJdbcUrl(),
+                "spring.datasource.username=" + container.getUsername(),
+                "spring.datasource.password=" + container.getPassword(),
                 "spring.jpa.properties.hibernate.format_sql=" + true,
                 "spring.liquibase.enabled=" + true)
                 .applyTo(configurableApplicationContext.getEnvironment());
