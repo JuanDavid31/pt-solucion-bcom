@@ -5,16 +5,8 @@ import com.bcom.pt.entidad.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
@@ -28,11 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@DataJpaTest
-@Testcontainers
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(initializers = { EventoRepositorioTest.Initializer.class })
-public class EventoRepositorioTest {
+public class EventoRepositorioTest extends DockerContainerPostgresTest {
 
     @Autowired
     private EntityManager em;
@@ -42,9 +30,6 @@ public class EventoRepositorioTest {
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
-
-    @Container
-    public static PostgresContainer container = PostgresContainer.getInstance();
 
     private final LocalDateTime fecha = LocalDateTime.now().plus(1, DAYS);
 
@@ -161,16 +146,4 @@ public class EventoRepositorioTest {
         assertThat(usuarioEncontrado.getEventosAsistidos()).hasSize(1);
     }
 
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        @Override
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                "spring.datasource.url=" + container.getJdbcUrl(),
-                "spring.datasource.username=" + container.getUsername(),
-                "spring.datasource.password=" + container.getPassword(),
-                "spring.jpa.properties.hibernate.format_sql=" + true,
-                "spring.liquibase.enabled=" + true)
-                .applyTo(configurableApplicationContext.getEnvironment());
-        }
-    }
 }
