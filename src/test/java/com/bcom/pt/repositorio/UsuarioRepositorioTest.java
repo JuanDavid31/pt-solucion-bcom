@@ -1,10 +1,8 @@
 package com.bcom.pt.repositorio;
 
 import com.bcom.pt.entidad.Usuario;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,8 +13,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -24,16 +23,15 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 
 
 @DataJpaTest// Recomendable leer la documentación
-@RunWith(SpringRunner.class) //Junit 5 no necesita esta anotación
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ContextConfiguration(initializers = { UsuarioRepositorioTest.Initializer.class })
-//@Sql(scripts = "/scripts/first.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)) //Se ejecuta una vez por @Test
+@Testcontainers
 public class UsuarioRepositorioTest {
 
     @Autowired
@@ -42,7 +40,7 @@ public class UsuarioRepositorioTest {
     @Autowired
     private TestEntityManager em;
 
-    @ClassRule
+    @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
 
     @Autowired
@@ -50,7 +48,7 @@ public class UsuarioRepositorioTest {
 
     private static boolean dataLoaded = false;
 
-    @Before
+    @BeforeEach
     public void setup() {
         if (dataLoaded)return;
         try (Connection conn = datasource.getConnection()) {

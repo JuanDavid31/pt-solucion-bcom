@@ -2,10 +2,8 @@ package com.bcom.pt.repositorio;
 
 import com.bcom.pt.entidad.Evento;
 import com.bcom.pt.entidad.Usuario;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,8 +13,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
@@ -26,15 +25,14 @@ import java.time.LocalDateTime;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
-@RunWith(SpringRunner.class)
+@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(initializers = { EventoRepositorioTest.Initializer.class })
-//@Sql(scripts = "/scripts/second.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
 public class EventoRepositorioTest {
 
     @Autowired
@@ -46,7 +44,7 @@ public class EventoRepositorioTest {
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
-    @ClassRule
+    @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
 
     private final LocalDateTime fecha = LocalDateTime.now().plus(1, DAYS);
@@ -56,7 +54,7 @@ public class EventoRepositorioTest {
 
     private static boolean dataLoaded = false;
 
-    @Before
+    @BeforeEach
     public void setup() {
         if (dataLoaded)return;
         try (Connection conn = datasource.getConnection()) {
