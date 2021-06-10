@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class EventoControlador {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Evento> editarEvento(@PathVariable int id, @RequestBody Evento evento) {
+    public ResponseEntity<Evento> editarEvento(@PathVariable int id, @Valid @RequestBody Evento evento) {
         Evento eventoActualizado = servicio.editarEvento(id, evento);
         return ResponseEntity.ok(eventoActualizado);
     }

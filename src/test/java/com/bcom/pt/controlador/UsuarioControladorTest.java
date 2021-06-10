@@ -67,6 +67,11 @@ public class UsuarioControladorTest {
     @Test
     public void agregarUsuarioInvalido() throws Exception {
         mockMvc.perform(post("/usuarios")
+                            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Usuario())))
             .andDo(print())

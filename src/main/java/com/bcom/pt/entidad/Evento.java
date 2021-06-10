@@ -13,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,12 +40,15 @@ public class Evento {
     private Set<Usuario> asistentes = new HashSet<>(); //Set es más optimo para @ManyToMany
 
     @Column
+    @NotNull(message = "nombre no puede ser null")
+    @Size(min = 4, max = 30, message = "nombre debe tener entre 4 y 30 caracteres")
     private String nombre;
 
     @Column
     private String descripcion;
 
     @Column
+    @NotNull
     private LocalDateTime fecha;
 
     @Column(name = "fecha_creacion")
