@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -57,8 +56,9 @@ public class Usuario {
         return id;
     }
 
-    public void setId(int id) {
+    public Usuario setId(int id) {
         this.id = id;
+        return this;
     }
 
     public String getNombre() {

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/usuarios/{id}/eventos")
 public class UsuarioEventoControlador {
@@ -22,7 +24,7 @@ public class UsuarioEventoControlador {
     }
 
     @PostMapping
-    public ResponseEntity<Evento> agregarEvento(@PathVariable int id, @RequestBody Evento evento) {
+    public ResponseEntity<Evento> agregarEvento(@PathVariable int id, @Valid @RequestBody Evento evento) {
         Evento eventoNuevo = servicio.agregarEvento(id, evento);
         return ResponseEntity.ok(eventoNuevo);
     }

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -86,12 +87,17 @@ public class UsuarioControladorTest {
 
     @Test
     public void agregarUsuarioValido() throws Exception {
-        when(servicio.agregarUsuario(any())).thenReturn(new Usuario());
+        Usuario usuarioValidoConId = new Usuario("valido")
+            .setId(11);
+
+        when(servicio.agregarUsuario(any())).thenReturn(usuarioValidoConId);
         mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Usuario("valido"))))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(11)))
+            .andExpect(jsonPath("$.nombre", is("valido")));
     }
 
 }
