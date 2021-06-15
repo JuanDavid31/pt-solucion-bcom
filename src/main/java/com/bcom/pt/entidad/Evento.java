@@ -48,7 +48,7 @@ public class Evento {
     private String descripcion;
 
     @Column
-    @NotNull
+    @NotNull(message = "fecha no puede ser null")
     private LocalDateTime fecha;
 
     @Column(name = "fecha_creacion")

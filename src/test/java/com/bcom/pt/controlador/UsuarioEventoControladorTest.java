@@ -1,10 +1,7 @@
 package com.bcom.pt.controlador;
 
 import com.bcom.pt.entidad.Evento;
-import com.bcom.pt.entidad.Usuario;
 import com.bcom.pt.servicio.EventoServicio;
-import com.bcom.pt.servicio.UsuarioServicio;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +39,16 @@ public class UsuarioEventoControladorTest {
         mockMvc.perform(post("/usuarios/1/eventos")
                             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error", isA(String.class)));
 
         mockMvc.perform(post("/usuarios/1/eventos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Evento())))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.nombre", isA(String.class)))
+            .andExpect(jsonPath("$.fecha", isA(String.class)));
 
         Evento evento = new Evento()
             .setNombre("abcde");

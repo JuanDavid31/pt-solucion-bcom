@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/usuarios/{id}/eventos")
-public class UsuarioEventoControlador {
+public class UsuarioEventoControlador extends ExceptionHandlerControlador {
 
     private final EventoServicio servicio;
 

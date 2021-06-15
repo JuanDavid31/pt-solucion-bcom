@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -59,30 +60,26 @@ public class UsuarioControladorTest {
     }
 
     @Test
-    public void agregarUsuarioSinUsuario() throws Exception {
-        mockMvc.perform(post("/usuarios"))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void agregarUsuarioInvalido() throws Exception {
         mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error", isA(String.class)));
 
         mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Usuario())))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.nombre", isA(String.class)));
 
         mockMvc.perform(post("/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Usuario("abc"))))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.nombre", isA(String.class)));
     }
 
     @Test

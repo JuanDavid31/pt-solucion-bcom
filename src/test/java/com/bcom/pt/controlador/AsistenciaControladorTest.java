@@ -10,12 +10,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
-
+import static org.hamcrest.Matchers.isA;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AsistenciaControlador.class)
@@ -35,7 +35,8 @@ public class AsistenciaControladorTest {
         mockMvc.perform(post("/asistencia")
                             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error", isA(String.class)));
 
         Asistencia asistencia = new Asistencia();
 
@@ -43,7 +44,9 @@ public class AsistenciaControladorTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(asistencia)))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.idUsuario", isA(String.class)))
+            .andExpect(jsonPath("$.idEvento", isA(String.class)));
 
         when(servicio.agregarAsistencia(anyInt(), anyInt())).thenReturn(false);
 

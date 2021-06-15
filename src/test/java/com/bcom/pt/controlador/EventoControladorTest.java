@@ -70,13 +70,16 @@ public class EventoControladorTest {
         mockMvc.perform(put("/eventos/1")
                             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error", isA(String.class)));
 
         mockMvc.perform(put("/eventos/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new Evento())))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.nombre", isA(String.class)))
+            .andExpect(jsonPath("$.fecha", isA(String.class)));
     }
 
     @Test
