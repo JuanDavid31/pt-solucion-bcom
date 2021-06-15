@@ -6,12 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -34,12 +31,6 @@ public class EventoRepositorioTest extends DockerContainerPostgresTest {
     private UsuarioRepositorio usuarioRepositorio;
 
     private final LocalDateTime fecha = LocalDateTime.now().plus(1, DAYS);
-
-    @Autowired
-    private DataSource datasource;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     private static boolean dataLoaded = false;
 
