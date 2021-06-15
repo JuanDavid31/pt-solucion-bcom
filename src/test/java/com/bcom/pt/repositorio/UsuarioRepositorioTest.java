@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
+import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,10 +28,14 @@ public class UsuarioRepositorioTest extends DockerContainerPostgresTest {
 
     private static boolean dataLoaded = false;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     public void setup() {
         if (dataLoaded)return;
         try (Connection conn = datasource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/scripts/clean_db.sql"));
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("/scripts/first.sql"));
             dataLoaded = true;
         } catch (SQLException throwables) {
