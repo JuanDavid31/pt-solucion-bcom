@@ -3,7 +3,10 @@ package com.bcom.pt.integration;
 
 import com.bcom.pt.entidad.Usuario;
 import com.bcom.pt.repositorio.UsuarioRepositorio;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SampleIntegrationTests {
 
     @Autowired
@@ -49,11 +53,13 @@ public class SampleIntegrationTests {
     }
 
     @Test
+    @Order(1)
     void contextLoads() {
         System.out.println("Context loads!");
     }
 
     @Test
+    @Order(2)
     public void darUsuariosVacios() throws Exception {
         mockMvc.perform(get("/usuarios"))
             .andDo(print())
@@ -62,6 +68,7 @@ public class SampleIntegrationTests {
     }
 
     @Test
+    @Order(3)
     public void darUsuarios() throws Exception {
         usuarioRepositorio.save(new Usuario("jaja"));
 
