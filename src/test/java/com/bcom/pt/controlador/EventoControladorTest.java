@@ -56,7 +56,7 @@ public class EventoControladorTest {
 
     @Test
     public void darEventos() throws Exception {
-        List<Evento> eventos = Collections.singletonList(new Evento());
+        List<Evento> eventos = Collections.singletonList(Evento.builder().build());
         when(servicio.darEventos()).thenReturn(eventos);
 
         mockMvc.perform(get("/eventos"))
@@ -75,7 +75,7 @@ public class EventoControladorTest {
 
         mockMvc.perform(put("/eventos/1")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(new Evento())))
+                            .content(objectMapper.writeValueAsString(Evento.builder().build())))
             .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.nombre", isA(String.class)))
@@ -84,9 +84,15 @@ public class EventoControladorTest {
 
     @Test
     public void editarEventoValido() throws Exception {
-        Evento evento = new Evento("Nombre", LocalDateTime.now());
-        Evento eventoConId = new Evento("Nombre", LocalDateTime.now())
-            .setId(10);
+        Evento evento = Evento.builder()
+            .nombre("Nombre")
+            .fecha(LocalDateTime.now())
+            .build();
+        Evento eventoConId = Evento.builder()
+            .id(10)
+            .nombre("Nombre")
+            .fecha(LocalDateTime.now())
+            .build();
 
         when(servicio.editarEvento(eq(1), eq(evento))).thenReturn(eventoConId);
 

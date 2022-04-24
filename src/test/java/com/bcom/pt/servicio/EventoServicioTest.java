@@ -39,15 +39,17 @@ public class EventoServicioTest {
 
     @Test
     public void editarEvento() {
-        Evento eventoViejo = new Evento()
-            .setNombre("Viejo")
-            .setDescripcion("Vieja")
-            .setFecha(LocalDateTime.now().plusDays(1));
+        Evento eventoViejo = Evento.builder()
+            .nombre("Viejo")
+            .descripcion("Vieja")
+            .fecha(LocalDateTime.now().plusDays(1))
+            .build();
 
-        Evento eventoNuevo = new Evento()
-            .setNombre("Nuevo")
-            .setDescripcion("Nueva")
-            .setFecha(LocalDateTime.now().plusDays(2));
+        Evento eventoNuevo = Evento.builder()
+            .nombre("Nuevo")
+            .descripcion("Nueva")
+            .fecha(LocalDateTime.now().plusDays(2))
+            .build();
 
         when(eventoRepositorio.getOne(1)).thenReturn(eventoViejo);
         when(eventoRepositorio.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));// Se le indica a repositorio.save(...) que devuelva el primer argumento que recibe

@@ -1,5 +1,13 @@
 package com.bcom.pt.entidad;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.With;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,8 +27,22 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * {@code @Table y @Entity} Para nombrar la tabla en la DB y que JPA la reconozca <br>
+ * {@code @Data} Para generar getters, setters, toString() y hashCode() <br>
+ * {@code @Setter} Para eliminar los setters y forzar al dev a solo crear inmutables <br>
+ * {@code @Builder} Para tener el builder method <br>
+ * {@code @With} Para complementar con {@code @builder} <br>
+ * Los {@code @...Constructor} Es para ayudar a JPA con la instanciación de objetos <br>
+ */
 @Table(name = "EVENTO")
 @Entity
+@Data
+@Setter(value = AccessLevel.NONE)
+@Builder
+@With
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class Evento {
 
     @Id
@@ -37,6 +59,7 @@ public class Evento {
         joinColumns = @JoinColumn(name = "id_evento", nullable = false),
         inverseJoinColumns = @JoinColumn(name="id_usuario", nullable = false)
     )
+    @Builder.Default
     private Set<Usuario> asistentes = new HashSet<>(); //Set es más optimo para @ManyToMany
 
     @Column
@@ -52,92 +75,12 @@ public class Evento {
     private LocalDateTime fecha;
 
     @Column(name = "fecha_creacion")
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(name = "fecha_modificacion")
+    @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
-
-    public Evento() {
-    }
-
-    public Evento(String nombre, LocalDateTime fecha) {
-        this.nombre = nombre;
-        this.fecha = fecha;
-    }
-
-    public Evento(String nombre, LocalDateTime fecha, Usuario creador) {
-        this.nombre = nombre;
-        this.fecha = fecha;
-        this.creador = creador;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Evento setId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    public Usuario getCreador() {
-        return creador;
-    }
-
-    public void setCreador(Usuario creador) {
-        this.creador = creador;
-    }
-
-    public Set<Usuario> getAsistentes() {
-        return asistentes;
-    }
-
-    public void setAsistentes(Set<Usuario> asistentes) {
-        this.asistentes = asistentes;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Evento setNombre(String nombre) {
-        this.nombre = nombre;
-        return this;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public Evento setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-        return this;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public Evento setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
-        return this;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public LocalDateTime getFechaModificacion() {
-        return fechaModificacion;
-    }
-
-    public void setFechaModificacion(LocalDateTime fechaModificacion) {
-        this.fechaModificacion = fechaModificacion;
-    }
 
     public void agregarAsistente(Usuario usuario) {
         asistentes.add(usuario);
@@ -151,32 +94,7 @@ public class Evento {
 
     @PreUpdate
     public void actualizarFechaModificacion() {
-        setFechaModificacion(LocalDateTime.now());
+        fechaModificacion = LocalDateTime.now();
     }
 
-    @Override
-    public boolean equals(Object o) { //TODO: El equals debe comparar todos los atributos
-        if (this == o) return true;
-        if (!(o instanceof Evento )) return false;
-        return id == (((Evento) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Evento{" +
-            "id=" + id +
-            ", creador=" + (creador != null) +
-            ", asistentes=" + asistentes.size() +
-            ", nombre='" + nombre + '\'' +
-            ", descripcion='" + descripcion + '\'' +
-            ", fecha=" + fecha +
-            ", fechaCreacion=" + fechaCreacion +
-            ", fechaModificacion=" + fechaModificacion +
-            '}';
-    }
 }

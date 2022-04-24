@@ -29,14 +29,13 @@ public class EventoServicio {
 
     public Evento editarEvento(int idEvento, Evento eventoNuevo) {
         Evento evento = eventoRepositorio.getOne(idEvento);
-        MapperUtils.mapearEvento(evento, eventoNuevo);
+        evento = MapperUtils.mapearEvento(evento, eventoNuevo);
         return eventoRepositorio.save(evento);
     }
 
     public Evento agregarEvento(int idUsuario, Evento evento) {
         Usuario usuario = usuarioRepositorio.getOne(idUsuario);
-        evento.setCreador(usuario);
-        return eventoRepositorio.save(evento);
+        return eventoRepositorio.save(evento.withCreador(usuario));
     }
 
     public void eliminarEvento(int id) {

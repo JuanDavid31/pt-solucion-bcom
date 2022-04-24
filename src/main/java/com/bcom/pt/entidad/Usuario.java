@@ -33,7 +33,7 @@ public class Usuario {
     //Update a la tabla evento y poner null en la llave foranea (orphanRemoval = false)
     //Delete sobre la tabla evento (orphanRemoval = true)
     @OneToMany(mappedBy = "creador", orphanRemoval = true)
-    private List<Evento> eventos = new ArrayList();
+    private List<Evento> eventos = new ArrayList<>();
 
     @ManyToMany(mappedBy = "asistentes")
     private Set<Evento> eventosAsistidos = new HashSet<>();//Set es más optimo para @ManyToMany
@@ -101,14 +101,14 @@ public class Usuario {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public void agregarEvento(Evento evento) {
+    public Evento agregarEvento(Evento evento) {
         eventos.add(evento);
-        evento.setCreador(this);
+        return evento.withCreador(this);
     }
 
-    public void eliminarEvento(Evento evento) {
+    public Evento eliminarEvento(Evento evento) {
         eventos.remove(evento);
-        evento.setCreador(null);
+        return evento.withCreador(null);
     }
 
     public void agregarEventoAsistido(Evento evento) {

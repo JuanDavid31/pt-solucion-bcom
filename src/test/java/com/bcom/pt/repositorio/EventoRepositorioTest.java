@@ -55,7 +55,11 @@ public class EventoRepositorioTest extends DockerContainerPostgresTest {
     @Test
     public void agregarEventoConReferencia() {
         Usuario usuario = usuarioRepositorio.getOne(1);//Igual que em.getReference(...)
-        Evento evento = eventoRepositorio.save(new Evento("Nuevo evento", fecha, usuario));
+        Evento evento = eventoRepositorio.save(Evento.builder()
+                                                   .nombre("Nuevo evento")
+                                                   .fecha(fecha)
+                                                   .creador(usuario)
+                                                   .build());
 
         Evento eventoAgregado = em.find(Evento.class, evento.getId());
         assertNotNull(eventoAgregado);
@@ -74,8 +78,10 @@ public class EventoRepositorioTest extends DockerContainerPostgresTest {
     @Test
     public void agregarEventoDesdeReferenciaNoAgrega() {
         Usuario usuario = usuarioRepositorio.getOne(1);
-        Evento evento = new Evento("Nuevo evento", fecha);
-        usuario.agregarEvento(evento);
+        usuario.agregarEvento(Evento.builder()
+                                  .nombre("Nuevo evento")
+                                  .fecha(fecha)
+                                  .build());
         usuarioRepositorio.save(usuario);
 
         assertThat(eventoRepositorio.findAll()).hasSize(2);
@@ -83,9 +89,8 @@ public class EventoRepositorioTest extends DockerContainerPostgresTest {
 
     @Test
     public void editarEvento() {
-        Evento evento = em.find(Evento.class, 100);
-
-        evento.setNombre("Nuevo nombre");
+        Evento evento = em.find(Evento.class, 100)
+            .withNombre("Nuevo nombre");
         eventoRepositorio.save(evento);
         evento = em.find(Evento.class, 100);
 

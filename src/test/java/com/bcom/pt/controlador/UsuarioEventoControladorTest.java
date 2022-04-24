@@ -44,14 +44,15 @@ public class UsuarioEventoControladorTest {
 
         mockMvc.perform(post("/usuarios/1/eventos")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(new Evento())))
+                            .content(objectMapper.writeValueAsString(Evento.builder().build())))
             .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.nombre", isA(String.class)))
             .andExpect(jsonPath("$.fecha", isA(String.class)));
 
-        Evento evento = new Evento()
-            .setNombre("abcde");
+        Evento evento = Evento.builder()
+            .nombre("abcde")
+            .build();
 
         mockMvc.perform(post("/usuarios/1/eventos")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -62,9 +63,15 @@ public class UsuarioEventoControladorTest {
 
     @Test
     public void agregarEvento() throws Exception {
-        Evento eventoValido = new Evento("Nombre", LocalDateTime.now());
-        Evento eventoValidoConId = new Evento("Nombre", LocalDateTime.now())
-            .setId(10);
+        Evento eventoValido = Evento.builder()
+            .nombre("Nombre")
+            .fecha(LocalDateTime.now())
+            .build();
+        Evento eventoValidoConId = Evento.builder()
+            .id(10)
+            .nombre("Nombre")
+            .fecha(LocalDateTime.now())
+            .build();
 
         when(servicio.agregarEvento(eq(1), any())).thenReturn(eventoValidoConId);
         mockMvc.perform(post("/usuarios/1/eventos")
